@@ -14,6 +14,7 @@ class Game:
 
         # initialise player list
         self._players = []
+        self._starting_player = 0
 
     def add_player(self, player):
         assert isinstance(player, Player)
@@ -34,6 +35,37 @@ class Game:
 
         for player in self._players:
             player.receive_hand(hands.pop())
+
+    def play_stroke(self):
+        pi = self._starting_player
+        cards = [(0, 0) for i in range(4)]
+        color = None
+
+        # play cards
+        for i in range(4):
+            p = self._players[pi]
+            card = p.play()
+
+            if color is None:
+                color = card[0]
+
+            cards[pi] = card
+            print "Player {} plays {}".format(p.name, card)
+            pi = pi + 1 if pi < 3 else 0
+
+        # evaluate results
+        highest_value = 0
+        victor = -1
+        for pi in range(4):
+            card = cards[pi]
+            if card[0] == color:
+                if card[1] > highest_value:
+                    victor = pi
+                    highest_value = card[1]
+
+        print "Stroke 1"
+        print "cards: {}".format(cards)
+        print "Winner: {}".format(victor)
 
     def _half_shuffle(self):
         #TODO implement half shuffle
@@ -60,3 +92,5 @@ if __name__ == '__main__':
 
     game.deal()
     game.showhands()
+
+    game.play_stroke()
