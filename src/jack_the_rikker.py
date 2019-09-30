@@ -87,10 +87,18 @@ class Game:
         self._find_mate(ace)
         print "{} is Mate".format(self._players[self._mate].name)
 
+        strokes_won = [0, 0, 0, 0]
+
+        # play strokes
         for s in range(1, 14):
             print "Stroke {}".format(s)
             victor = self.play_stroke()
+            strokes_won[victor] += 1
             print "winner is {}".format(self._players[victor].name)
+
+        print "strokes won:"
+        for player in self._players:
+            print "{} has won {} strokes".format(player.name, strokes_won[player.id])
 
     def _find_mate(self, ace):
         for player in self._players:
