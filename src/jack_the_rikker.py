@@ -61,10 +61,19 @@ class Game:
 
         # evaluate results
         highest_value = 0
+        trumped = False
         victor = -1
         for pi in range(4):
             card = cards[pi]
-            if card[0] == color:
+            if card[0] == self._trump:
+                if not trumped:
+                    victor = pi
+                    highest_value = card[1]
+                    trumped = True
+                elif card[1] > highest_value:
+                    victor = pi
+                    highest_value = card[1]
+            if card[0] == color and not trumped:
                 if card[1] > highest_value:
                     victor = pi
                     highest_value = card[1]
@@ -72,12 +81,13 @@ class Game:
 
     def play_round(self, rikker, trump, ace):
         self._rikker = rikker
-        print "{} is Rikking".format(self._players[self._rikker].name)
+        self._trump = trump
+        print "{} is Rikking in {}".format(self._players[self._rikker].name, self._trump)
 
         self._find_mate(ace)
         print "{} is Mate".format(self._players[self._mate].name)
 
-        for s in range(1,14):
+        for s in range(1, 14):
             print "Stroke {}".format(s)
             victor = self.play_stroke()
             print "winner is {}".format(self._players[victor].name)
