@@ -85,7 +85,7 @@ class Game:
         print "{} is Rikking in {}".format(self._players[self._rikker].name, self._trump)
 
         self._find_mate(ace)
-        print "{} is Mate".format(self._players[self._mate].name)
+        print "{} is Mate with the ace of {}".format(self._players[self._mate].name, ace)
 
         strokes_won = [0, 0, 0, 0]
 
@@ -93,8 +93,10 @@ class Game:
         for s in range(1, 14):
             print "Stroke {}".format(s)
             victor = self.play_stroke()
-            strokes_won[victor] += 1
             print "winner is {}\n".format(self._players[victor].name)
+            strokes_won[victor] += 1
+            self._starting_player = victor
+
 
         print "strokes won:"
         for player in self._players:

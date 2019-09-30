@@ -10,7 +10,6 @@ class Player:
     def play(self, color):
         # check which cards are playable
         valid_cards = [card for card in self._hand if card[0] == color]
-        print "valid_cards for {}: {}".format(self.name, valid_cards)
         if not valid_cards:
             valid_cards = self._hand
 
