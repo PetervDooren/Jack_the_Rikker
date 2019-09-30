@@ -16,8 +16,14 @@ class Game:
         self._players = []
         self._starting_player = 0
 
+        # trump and teams
+        self._trump = -1
+        self._rikker = -1
+        self._mate = -1
+
     def add_player(self, player):
         assert isinstance(player, Player)
+        player.id = len(self._players)
         self._players.append(player)
 
     def deal(self):
@@ -50,7 +56,7 @@ class Game:
                 color = card[0]
 
             cards[pi] = card
-            print "Player {} plays {}".format(p.name, card)
+            print "{} plays {}".format(p.name, card)
             pi = pi + 1 if pi < 3 else 0
 
         # evaluate results
@@ -62,10 +68,25 @@ class Game:
                 if card[1] > highest_value:
                     victor = pi
                     highest_value = card[1]
+        return victor
 
-        print "Stroke 1"
-        print "cards: {}".format(cards)
-        print "Winner: {}".format(victor)
+    def play_round(self, rikker, trump, ace):
+        self._rikker = rikker
+        print "{} is Rikking".format(self._players[self._rikker].name)
+
+        self._find_mate(ace)
+        print "{} is Mate".format(self._players[self._mate].name)
+
+        for s in range(1,14):
+            print "Stroke {}".format(s)
+            victor = self.play_stroke()
+            print "winner is {}".format(self._players[victor].name)
+
+    def _find_mate(self, ace):
+        for player in self._players:
+            if (ace, 13) in player._hand:
+                self._mate = player.id
+                return
 
     def _half_shuffle(self):
         #TODO implement half shuffle
@@ -80,10 +101,10 @@ class Game:
 if __name__ == '__main__':
     game = Game()
 
-    Player0 = Player('p0')
-    Player1 = Player('p1')
-    Player2 = Player('p2')
-    Player3 = Player('p3')
+    Player0 = Player('zero')
+    Player1 = Player('uno')
+    Player2 = Player('zwei')
+    Player3 = Player('dries')
 
     game.add_player(Player0)
     game.add_player(Player1)
@@ -93,4 +114,4 @@ if __name__ == '__main__':
     game.deal()
     game.showhands()
 
-    game.play_stroke()
+    game.play_round(0, 0, 1)
