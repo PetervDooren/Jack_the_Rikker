@@ -50,7 +50,7 @@ class Game:
         # play cards
         for i in range(4):
             p = self._players[pi]
-            card = p.play()
+            card = p.play(color)
 
             if color is None:
                 color = card[0]
@@ -94,7 +94,7 @@ class Game:
             print "Stroke {}".format(s)
             victor = self.play_stroke()
             strokes_won[victor] += 1
-            print "winner is {}".format(self._players[victor].name)
+            print "winner is {}\n".format(self._players[victor].name)
 
         print "strokes won:"
         for player in self._players:
@@ -114,6 +114,7 @@ class Game:
         for p in self._players:
             print p.name
             print p._hand
+        print "\n"
 
 
 if __name__ == '__main__':
