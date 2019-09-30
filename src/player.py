@@ -7,9 +7,9 @@ class Player:
         self.id = -1
         self._hand = []
 
-    def play(self, color):
+    def play(self, suit):
         # check which cards are playable
-        valid_cards = [card for card in self._hand if card[0] == color]
+        valid_cards = [card for card in self._hand if card[0] == suit]
         if not valid_cards:
             valid_cards = self._hand
 

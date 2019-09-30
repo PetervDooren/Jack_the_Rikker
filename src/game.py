@@ -7,8 +7,8 @@ class Game:
         self._deck = []
 
         # initialise deck
-        for color in range(4):
-            self._deck.extend([(color, i) for i in range(2, 15)])
+        for suit in range(4):
+            self._deck.extend([(suit, i) for i in range(2, 15)])
         random.shuffle(self._deck)
 
         # initialise player list
@@ -44,15 +44,15 @@ class Game:
     def play_stroke(self):
         pi = self._starting_player
         cards = [(0, 0) for i in range(4)]
-        color = None
+        suit = None
 
         # play cards
         for i in range(4):
             p = self._players[pi]
-            card = p.play(color)
+            card = p.play(suit)
 
-            if color is None:
-                color = card[0]
+            if suit is None:
+                suit = card[0]
 
             cards[pi] = card
             print "{} plays {}".format(p.name, card)
@@ -72,7 +72,7 @@ class Game:
                 elif card[1] > highest_value:
                     victor = pi
                     highest_value = card[1]
-            if card[0] == color and not trumped:
+            if card[0] == suit and not trumped:
                 if card[1] > highest_value:
                     victor = pi
                     highest_value = card[1]
