@@ -1,5 +1,9 @@
 import random
+from collections import namedtuple
+
 from player import Player
+
+Card = namedtuple('Card', 'suit value')
 
 
 class Game:
@@ -8,7 +12,7 @@ class Game:
 
         # initialise deck
         for suit in range(4):
-            self._deck.extend([(suit, i) for i in range(2, 15)])
+            self._deck.extend([Card(suit, i) for i in range(2, 15)])
         random.shuffle(self._deck)
 
         # initialise player list
@@ -43,7 +47,7 @@ class Game:
 
     def play_stroke(self):
         pi = self._starting_player
-        cards = [(0, 0) for i in range(4)]
+        cards = [Card(0, 0) for i in range(4)]
         suit = None
 
         # play cards
@@ -52,7 +56,7 @@ class Game:
             card = p.play(suit)
 
             if suit is None:
-                suit = card[0]
+                suit = card.suit
 
             cards[pi] = card
             print "{} plays {}".format(p.name, card)
@@ -64,18 +68,18 @@ class Game:
         victor = -1
         for pi in range(4):
             card = cards[pi]
-            if card[0] == self._trump:
+            if card.suit == self._trump:
                 if not trumped:
                     victor = pi
-                    highest_value = card[1]
+                    highest_value = card.value
                     trumped = True
-                elif card[1] > highest_value:
+                elif card.value > highest_value:
                     victor = pi
-                    highest_value = card[1]
-            if card[0] == suit and not trumped:
-                if card[1] > highest_value:
+                    highest_value = card.value
+            if card.suit == suit and not trumped:
+                if card.value > highest_value:
                     victor = pi
-                    highest_value = card[1]
+                    highest_value = card.value
         return victor
 
     def play_round(self, rikker, trump, ace):
@@ -95,7 +99,6 @@ class Game:
             print "winner is {}\n".format(self._players[victor].name)
             strokes_won[victor] += 1
             self._starting_player = victor
-
 
         print "strokes won:"
         for player in self._players:
