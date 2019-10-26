@@ -46,21 +46,9 @@ class App:
         )
         self.button.place(relx=0.1, rely=0.1)
 
-        self.hi_there = tk.Button(frame2, command=self.change_image)
-        self.hi_there.config(image=images[2][12])
-        self.hi_there.place(relx=0.1, rely=0.1)
-
-        self.testButton = CardButton(frame3, command=self.test)
-        self.testButton.place(relx=0.2, rely=0.0)
-
         self.handDisplay = HandDisplay(parent)
 
         self.handDisplay.place(relx=0.0, rely=0.6, relheight=0.4, relwidth=1.0)
-
-    def change_image(self):
-        print "hi there, everyone!"
-        card = Card(3, 10)
-        self.hi_there.config(image=images[card.suit][card.value - 2])
 
     def test(self):
         card = Card(2, 2)
