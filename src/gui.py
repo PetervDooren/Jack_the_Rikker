@@ -4,15 +4,15 @@ from PIL import Image
 from game import Card
 
 
-class CardButton:
+class HandDisplay:
 
-    def __init__(self, master, card=Card(0, 0)):
-        frame = Frame(master)
-        frame.pack()
+    def __init__(self, master):
+        self.frame = Frame(master, bg="yellow")
+        self.frame.place(relx=0.1, rely=0.1)
 
-        self.button = Button(frame, command=self.change_image)
+        self.button = Button(self.frame, command=self.change_image)
         self.button.config(image=images[1][12])
-        self.button.pack(side=LEFT)
+        self.button.place(relx=0.0, rely=0.0)
 
     def change_image(self):
         card = Card(2, 10)
@@ -42,6 +42,8 @@ class App:
         self.hi_there = Button(frame2, command=self.change_image)
         self.hi_there.config(image=images[2][12])
         self.hi_there.place(relx=0.1, rely=0.1)
+
+        self.handDisplay = HandDisplay(frame5)
 
     def change_image(self):
         print "hi there, everyone!"
