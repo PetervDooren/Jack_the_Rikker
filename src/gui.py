@@ -16,10 +16,15 @@ class HandDisplay(tk.Frame):
 
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, bg="yellow")
-        self.button = tk.Button(self, text="Button", fg="red", command=self.change_image())
-        self.button.place(relx=0.5, rely=0.5)
 
-    def change_image(self):
+        ncards=13
+        self.cards = [[] for i in range(ncards)]
+        for i in range(ncards):
+            self.cards[i] = CardButton(self, command=self.test)
+            self.cards[i].change_card(Card(1, i+2))
+            self.cards[i].place(relx=1.0*i/ncards, rely=0.0, relwidth=1.0/ncards, relheight=1.0)
+
+    def test(self):
         print "button works"
 
 
@@ -61,9 +66,9 @@ class App:
         card = Card(2, 2)
         self.testButton.change_card(card)
 
+
 width = 800
 height = 600
-
 
 root = tk.Tk()
 
