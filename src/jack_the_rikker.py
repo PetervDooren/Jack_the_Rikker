@@ -17,4 +17,18 @@ if __name__ == '__main__':
     game.deal()
     game.showhands()
 
-    game.play_round(0, 0, 1)
+    game.initialise_round(0, 0, 1)
+
+    # play strokes
+    for s in range(1, 14):
+        print "Stroke {}".format(s)
+        for i in range(4):
+            p = game._players[game.next_player]
+            card = p.play(game.suit)
+            game.play(p.id, card)
+
+    print "strokes won:"
+    for player in game._players:
+        print "{} has won {} strokes".format(player.name, game.strokes_won[player.id])
+
+    game.evaluate_round()

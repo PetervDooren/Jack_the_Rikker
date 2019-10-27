@@ -71,6 +71,8 @@ class Game:
 
         self.strokes_won = [0, 0, 0, 0]
 
+        self.next_player = self._starting_player
+
     def play(self, player_id, card):
         # verify input
         if player_id != self.next_player:
@@ -82,6 +84,7 @@ class Game:
 
         # register card
         self.cards[player_id] = card
+        print "{} plays {}".format(self._players[player_id].name, card)
 
         if self.suit is None:
             self.suit = card.suit
@@ -137,7 +140,7 @@ class Game:
             p = self._players[self.next_player]
             card = p.play(self.suit)
 
-            self.play(self.next_player, card)
+            self.play(p.id, card)
 
             print "{} plays {}".format(p.name, card)
         return
