@@ -56,30 +56,6 @@ class Game:
         for player in self._players:
             player.receive_hand(hands.pop())
 
-    def evaluate_stroke(self):
-        if any([card.value == 0 for card in self.cards]):
-            return
-
-        highest_value = 0
-        trumped = False
-        victor = -1
-
-        for pi in range(4):
-            card = self.cards[pi]
-            if card.suit == self._trump:
-                if not trumped:
-                    victor = pi
-                    highest_value = card.value
-                    trumped = True
-                elif card.value > highest_value:
-                    victor = pi
-                    highest_value = card.value
-            if card.suit == self.suit and not trumped:
-                if card.value > highest_value:
-                    victor = pi
-                    highest_value = card.value
-        return victor
-
     def initialise_stroke(self, starting_player):
         self.next_player = starting_player
         self.suit = None
@@ -114,6 +90,30 @@ class Game:
 
         # verify stroke
         self.evaluate_stroke()
+
+    def evaluate_stroke(self):
+        if any([card.value == 0 for card in self.cards]):
+            return
+
+        highest_value = 0
+        trumped = False
+        victor = -1
+
+        for pi in range(4):
+            card = self.cards[pi]
+            if card.suit == self._trump:
+                if not trumped:
+                    victor = pi
+                    highest_value = card.value
+                    trumped = True
+                elif card.value > highest_value:
+                    victor = pi
+                    highest_value = card.value
+            if card.suit == self.suit and not trumped:
+                if card.value > highest_value:
+                    victor = pi
+                    highest_value = card.value
+        return victor
 
     def play_stroke(self):
         self.next_player = self._starting_player
