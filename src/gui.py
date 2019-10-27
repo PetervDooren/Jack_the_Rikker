@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+
 import Tkinter as tk
 
 from game import Card
+
+images = []
 
 
 class CardButton(tk.Button):
@@ -49,32 +53,39 @@ class App:
         self.handDisplay = HandDisplay(parent)
         self.handDisplay.place(relx=0.0, rely=0.6, relheight=0.4, relwidth=1.0)
 
-    def test(self):
-        card = Card(2, 2)
-        self.testButton.change_card(card)
+
+class Window:
+
+    def __init__(self, root):
+        width = 1200
+        height = 1200
+
+        initialise_images()
+        # set initial size of the window
+        canvas = tk.Canvas(root, height=height, width=width)
+        canvas.pack()
+
+        app = App(root)
 
 
-width = 1200
-height = 1200
+def initialise_images():
+    # get card images
+    global images
+    images = [[[] for j in range(13)] for i in range(4)]
+    suits = ['H', 'S', 'D', 'C']
+    values = [str(i) for i in range(2, 11)]
+    values.extend(['J', 'Q', 'K', 'A'])
+    for s in range(len(suits)):
+        for v in range(len(values)):
+            image_path = "images/" + values[v] + suits[s] + ".png"
+            images[s][v] = tk.PhotoImage(file=image_path)
+            images[s][v] = images[s][v].subsample(3)
 
-root = tk.Tk()
 
-# get card images
-images = [[[] for j in range(13)] for i in range(4)]
-suits = ['H', 'S', 'D', 'C']
-values = [str(i) for i in range(2, 11)]
-values.extend(['J', 'Q', 'K', 'A'])
-for s in range(len(suits)):
-    for v in range(len(values)):
-        image_path = "images/" + values[v] + suits[s] + ".png"
-        images[s][v] = tk.PhotoImage(file=image_path)
-        images[s][v] = images[s][v].subsample(3)
+if __name__ == "__main__":
+    root = tk.Tk()
 
-# set initial size of the window
-canvas = tk.Canvas(root, height=height, width=width)
-canvas.pack()
+    window = Window(root)
 
-app = App(root)
-
-root.mainloop()
-root.destroy()  # optional; see description below
+    root.mainloop()
+    root.destroy()

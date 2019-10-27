@@ -19,15 +19,25 @@ class Game:
         self._players = []
         self._starting_player = 0
 
-        # trump and teams
+        # round tracking
         self._trump = -1
         self._rikker = -1
         self._mate = -1
+        self.strokes_won = [0, 0, 0, 0]
+        self.stroke_nr = 0
+
+        # stroke tracking
+        self.suit = None
+        self.cards = [Card(0, 0) for i in range(4)]
 
     def add_player(self, player):
         assert isinstance(player, Player)
-        player.id = len(self._players)
-        self._players.append(player)
+        nplayers = len(self._players)
+        if nplayers < 4:
+            player.id = nplayers
+            self._players.append(player)
+        else:
+            print "Already four players added"
 
     def deal(self):
         hands = [[] for i in range(4)]
@@ -45,29 +55,13 @@ class Game:
         for player in self._players:
             player.receive_hand(hands.pop())
 
-    def play_stroke(self):
-        pi = self._starting_player
-        cards = [Card(0, 0) for i in range(4)]
-        suit = None
-
-        # play cards
-        for i in range(4):
-            p = self._players[pi]
-            card = p.play(suit)
-
-            if suit is None:
-                suit = card.suit
-
-            cards[pi] = card
-            print "{} plays {}".format(p.name, card)
-            pi = pi + 1 if pi < 3 else 0
-
-        # evaluate results
+    def evaluate_stroke(self):
         highest_value = 0
         trumped = False
         victor = -1
+
         for pi in range(4):
-            card = cards[pi]
+            card = self.cards[pi]
             if card.suit == self._trump:
                 if not trumped:
                     victor = pi
@@ -76,13 +70,32 @@ class Game:
                 elif card.value > highest_value:
                     victor = pi
                     highest_value = card.value
-            if card.suit == suit and not trumped:
+            if card.suit == self.suit and not trumped:
                 if card.value > highest_value:
                     victor = pi
                     highest_value = card.value
         return victor
 
-    def play_round(self, rikker, trump, ace):
+    def play_stroke(self):
+        pi = self._starting_player
+        self.cards = [Card(0, 0) for i in range(4)]
+        self.suit = None
+
+        # play cards
+        for i in range(4):
+            p = self._players[pi]
+            card = p.play(self.suit)
+
+            if self.suit is None:
+                self.suit = card.suit
+
+            self.cards[pi] = card
+            print "{} plays {}".format(p.name, card)
+            pi = pi + 1 if pi < 3 else 0
+
+        return self.evaluate_stroke()
+
+    def initialise_round(self, rikker, trump, ace):
         self._rikker = rikker
         self._trump = trump
         print "{} is Rikking in {}".format(self._players[self._rikker].name, self._trump)
@@ -90,19 +103,22 @@ class Game:
         self._find_mate(ace)
         print "{} is Mate with the ace of {}".format(self._players[self._mate].name, ace)
 
-        strokes_won = [0, 0, 0, 0]
+        self.strokes_won = [0, 0, 0, 0]
+
+    def play_round(self, rikker, trump, ace):
+        self.initialise_round(rikker, trump, ace)
 
         # play strokes
         for s in range(1, 14):
             print "Stroke {}".format(s)
             victor = self.play_stroke()
             print "winner is {}\n".format(self._players[victor].name)
-            strokes_won[victor] += 1
+            self.strokes_won[victor] += 1
             self._starting_player = victor
 
         print "strokes won:"
         for player in self._players:
-            print "{} has won {} strokes".format(player.name, strokes_won[player.id])
+            print "{} has won {} strokes".format(player.name, self.strokes_won[player.id])
 
     def _find_mate(self, ace):
         for player in self._players:
