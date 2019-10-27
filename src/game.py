@@ -99,7 +99,7 @@ class Game:
         # verify input
         if player_id != self.next_player:
             print "It is currently not {}'s turn. {} is up next".format(
-                self._players[player_id], self._players[self.next_player])
+                self._players[player_id].name, self._players[self.next_player].name)
             return
 
         assert isinstance(card, Card), "invalid card type: {}" .format(card)
@@ -107,25 +107,27 @@ class Game:
         # register card
         self.cards[player_id] = card
 
+        if self.suit is None:
+            self.suit = card.suit
+
+        self.next_player = self.next_player + 1 if self.next_player < 3 else 0
+
         # verify stroke
         self.evaluate_stroke()
 
     def play_stroke(self):
-        pi = self._starting_player
+        self.next_player = self._starting_player
         self.cards = [Card(0, 0) for i in range(4)]
         self.suit = None
 
         # play cards
         for i in range(4):
-            p = self._players[pi]
+            p = self._players[self.next_player]
             card = p.play(self.suit)
 
-            if self.suit is None:
-                self.suit = card.suit
+            self.play(self.next_player, card)
 
-            self.cards[pi] = card
             print "{} plays {}".format(p.name, card)
-            pi = pi + 1 if pi < 3 else 0
 
         return self.evaluate_stroke()
 
