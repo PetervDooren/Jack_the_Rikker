@@ -88,13 +88,11 @@ class Game:
 
         self.next_player = self.next_player + 1 if self.next_player < 3 else 0
 
-        # verify stroke
-        self.evaluate_stroke()
+        # if the stroke is finished evaluate the results
+        if not any([card.value == 0 for card in self.cards]):
+            self.evaluate_stroke()
 
     def evaluate_stroke(self):
-        if any([card.value == 0 for card in self.cards]):
-            return
-
         highest_value = 0
         trumped = False
         victor = -1
@@ -113,7 +111,21 @@ class Game:
                 if card.value > highest_value:
                     victor = pi
                     highest_value = card.value
-        return victor
+
+        # declare winner
+        print "winner is {}\n".format(self._players[victor].name)
+        self.strokes_won[victor] += 1
+
+        # initialise next stroke
+        self.initialise_stroke(victor)
+
+    def evaluate_round(self):
+        # declare winners
+        rikker_wins = self.strokes_won[self._rikker] + self.strokes_won[self._mate]
+        if rikker_wins < 8:
+            print "Fewer than 8 strokes won by the rikker and his mate! They lose!"
+        else:
+            print "The rikker and his mate have reached 8 strokes!"
 
     def play_stroke(self):
         self.next_player = self._starting_player
@@ -128,8 +140,7 @@ class Game:
             self.play(self.next_player, card)
 
             print "{} plays {}".format(p.name, card)
-
-        return self.evaluate_stroke()
+        return
 
     def play_round(self, rikker, trump, ace):
         self.initialise_round(rikker, trump, ace)
@@ -137,14 +148,13 @@ class Game:
         # play strokes
         for s in range(1, 14):
             print "Stroke {}".format(s)
-            victor = self.play_stroke()
-            print "winner is {}\n".format(self._players[victor].name)
-            self.strokes_won[victor] += 1
-            self._starting_player = victor
+            self.play_stroke()
 
         print "strokes won:"
         for player in self._players:
             print "{} has won {} strokes".format(player.name, self.strokes_won[player.id])
+
+        self.evaluate_round()
 
     def _find_mate(self, ace):
         for player in self._players:
