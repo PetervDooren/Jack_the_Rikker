@@ -22,7 +22,7 @@ class HandDisplay(tk.Frame):
         for i in range(ncards):
             self.cards[i] = CardButton(self, command=self.test)
             self.cards[i].change_card(Card(1, i+2))
-            self.cards[i].place(relx=1.0*i/ncards, rely=0.0, relwidth=1.0/ncards, relheight=1.0)
+            self.cards[i].place(relx=1.0*i/ncards, rely=0.05, relwidth=1.0/ncards, relheight=0.9)
 
     def test(self):
         print "button works"
@@ -41,13 +41,12 @@ class App:
         frame3.place(relx=0.0, rely=0.3, relheight=0.3, relwidth=0.5)
         frame4.place(relx=0.5, rely=0.3, relheight=0.3, relwidth=0.5)
 
-        self.button = tk.Button(
-            frame1, text="QUIT", fg="red", command=frame1.quit
+        self.quitbutton = tk.Button(
+            frame3, text="QUIT", fg="red", command=frame3.quit
         )
-        self.button.place(relx=0.1, rely=0.1)
+        self.quitbutton.place(relx=0.1, rely=0.1)
 
         self.handDisplay = HandDisplay(parent)
-
         self.handDisplay.place(relx=0.0, rely=0.6, relheight=0.4, relwidth=1.0)
 
     def test(self):
@@ -55,8 +54,8 @@ class App:
         self.testButton.change_card(card)
 
 
-width = 800
-height = 600
+width = 1200
+height = 1200
 
 root = tk.Tk()
 
@@ -69,6 +68,7 @@ for s in range(len(suits)):
     for v in range(len(values)):
         image_path = "images/" + values[v] + suits[s] + ".png"
         images[s][v] = tk.PhotoImage(file=image_path)
+        images[s][v] = images[s][v].subsample(3)
 
 # set initial size of the window
 canvas = tk.Canvas(root, height=height, width=width)
