@@ -17,9 +17,9 @@ class Game:
 
         # initialise player list
         self._players = []
-        self._starting_player = 0
 
         # round tracking
+        self._starting_player = 0
         self._trump = -1
         self._rikker = -1
         self._mate = -1
@@ -27,6 +27,7 @@ class Game:
         self.stroke_nr = 0
 
         # stroke tracking
+        self.next_player = -1
         self.suit = None
         self.cards = [Card(0, 0) for i in range(4)]
 
@@ -56,6 +57,9 @@ class Game:
             player.receive_hand(hands.pop())
 
     def evaluate_stroke(self):
+        if any([card.value == 0 for card in self.cards]):
+            return
+
         highest_value = 0
         trumped = False
         victor = -1
@@ -76,6 +80,36 @@ class Game:
                     highest_value = card.value
         return victor
 
+    def initialise_stroke(self, starting_player):
+        self.next_player = starting_player
+        self.suit = None
+        self.cards = [Card(0, 0) for i in range(4)]
+
+    def initialise_round(self, rikker, trump, ace):
+        self._rikker = rikker
+        self._trump = trump
+        print "{} is Rikking in {}".format(self._players[self._rikker].name, self._trump)
+
+        self._find_mate(ace)
+        print "{} is Mate with the ace of {}".format(self._players[self._mate].name, ace)
+
+        self.strokes_won = [0, 0, 0, 0]
+
+    def play(self, player_id, card):
+        # verify input
+        if player_id != self.next_player:
+            print "It is currently not {}'s turn. {} is up next".format(
+                self._players[player_id], self._players[self.next_player])
+            return
+
+        assert isinstance(card, Card), "invalid card type: {}" .format(card)
+
+        # register card
+        self.cards[player_id] = card
+
+        # verify stroke
+        self.evaluate_stroke()
+
     def play_stroke(self):
         pi = self._starting_player
         self.cards = [Card(0, 0) for i in range(4)]
@@ -94,16 +128,6 @@ class Game:
             pi = pi + 1 if pi < 3 else 0
 
         return self.evaluate_stroke()
-
-    def initialise_round(self, rikker, trump, ace):
-        self._rikker = rikker
-        self._trump = trump
-        print "{} is Rikking in {}".format(self._players[self._rikker].name, self._trump)
-
-        self._find_mate(ace)
-        print "{} is Mate with the ace of {}".format(self._players[self._mate].name, ace)
-
-        self.strokes_won = [0, 0, 0, 0]
 
     def play_round(self, rikker, trump, ace):
         self.initialise_round(rikker, trump, ace)
