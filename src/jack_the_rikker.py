@@ -26,9 +26,3 @@ if __name__ == '__main__':
             p = game._players[game.next_player]
             card = p.play(game.suit)
             game.play(p.id, card)
-
-    print "strokes won:"
-    for player in game._players:
-        print "{} has won {} strokes".format(player.name, game.strokes_won[player.id])
-
-    game.evaluate_round()

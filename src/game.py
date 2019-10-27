@@ -121,6 +121,10 @@ class Game:
 
         # initialise next stroke
         self.initialise_stroke(victor)
+        self.stroke_nr += 1
+
+        if self.stroke_nr >= 13:
+            self.evaluate_round()
 
     def evaluate_round(self):
         # declare winners
@@ -129,6 +133,9 @@ class Game:
             print "Fewer than 8 strokes won by the rikker and his mate! They lose!"
         else:
             print "The rikker and his mate have reached 8 strokes!"
+
+        for player in self._players:
+            print "{} has won {} strokes".format(player.name, self.strokes_won[player.id])
 
     def play_stroke(self):
         self.next_player = self._starting_player
