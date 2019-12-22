@@ -44,7 +44,8 @@ class HandDisplay(tk.Frame):
         global game
         p = game._players[game.next_player]
         card = p.play(i, game.suit)
-        game.play(p.id, card)
+        if card:
+            game.play(p.id, card)
 
         self.show_hand()
 

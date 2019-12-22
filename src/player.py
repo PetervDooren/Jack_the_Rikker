@@ -31,15 +31,19 @@ class AutoPlayer(Player):
 class ManualPlayer(Player):
 
     def play(self, ind, suit):
+        if ind >= len(self.hand):
+            print "This is not a card numnuts"
+            return None
+
         card = self.hand[ind]
         # check which cards are playable
-        valid_cards = [card for card in self.hand if card.suit == suit]
+        valid_cards = [c for c in self.hand if c.suit == suit]
         if not valid_cards:
             valid_cards = self.hand
 
         if card in valid_cards:
             self.hand.remove(card)
             return card
-        else:
-            print "Invalid card selected {}"
-            return None
+
+        print "Invalid card selected {}"
+        return None
