@@ -2,9 +2,15 @@
 
 import Tkinter as tk
 
-from game import Card
+from functools import partial
+
+from game import Card, Game
+from player import ManualPlayer, AutoPlayer
 
 images = []
+backs = []
+colors = ["red", "blue", "yellow", "green"]
+game = Game()
 
 
 class CardButton(tk.Button):
@@ -13,7 +19,12 @@ class CardButton(tk.Button):
         tk.Button.__init__(self, parent, command=command)
 
     def change_card(self, card):
-        self.config(image=images[card.suit][card.value - 2])
+        if isinstance(card, Card):
+            self.config(image=images[card.suit][card.value - 2])
+        elif isinstance(card, int):
+            self.config(image=backs[card])
+        else:
+            print ("wrong input to change_card function. {}".format(card))
 
 
 class HandDisplay(tk.Frame):
@@ -24,17 +35,35 @@ class HandDisplay(tk.Frame):
         ncards=13
         self.cards = [[] for i in range(ncards)]
         for i in range(ncards):
-            self.cards[i] = CardButton(self, command=self.test)
+            self.cards[i] = CardButton(self, command=partial(self.play, i))
             self.cards[i].change_card(Card(1, i+2))
             self.cards[i].place(relx=1.0*i/ncards, rely=0.05, relwidth=1.0/ncards, relheight=0.9)
+        self.show_hand()
 
-    def test(self):
-        print "button works"
+    def play(self, i):
+        global game
+        p = game._players[game.next_player]
+        card = p.play(i, game.suit)
+        game.play(p.id, card)
+
+        self.show_hand()
+
+    def show_hand(self):
+        next_player = game.next_player
+        self.config(bg=colors[next_player])
+        hand = game._players[next_player]._hand
+        for i in range(len(self.cards)):
+            if i < len(hand):
+                self.cards[i].change_card(hand[i])
+            else:
+                self.cards[i].change_card(next_player)
 
 
 class App:
 
     def __init__(self, parent):
+        self.setup_game()
+
         frame1 = tk.Frame(parent, bg="red")
         frame2 = tk.Frame(parent, bg="green")
         frame3 = tk.Frame(parent, bg="blue")
@@ -53,6 +82,24 @@ class App:
         self.handDisplay = HandDisplay(parent)
         self.handDisplay.place(relx=0.0, rely=0.6, relheight=0.4, relwidth=1.0)
 
+    def setup_game(self):
+        global game
+
+        Player0 = ManualPlayer('zero')
+        Player1 = ManualPlayer('uno')
+        Player2 = ManualPlayer('zwei')
+        Player3 = ManualPlayer('dries')
+
+        game.add_player(Player0)
+        game.add_player(Player1)
+        game.add_player(Player2)
+        game.add_player(Player3)
+
+        game.deal()
+        game.showhands()
+
+        game.initialise_round(0, 0, 1)
+
 
 class Window:
 
@@ -70,7 +117,7 @@ class Window:
 
 def initialise_images():
     # get card images
-    global images
+    global images, backs
     images = [[[] for j in range(13)] for i in range(4)]
     suits = ['H', 'S', 'D', 'C']
     values = [str(i) for i in range(2, 11)]
@@ -80,6 +127,12 @@ def initialise_images():
             image_path = "images/" + values[v] + suits[s] + ".png"
             images[s][v] = tk.PhotoImage(file=image_path)
             images[s][v] = images[s][v].subsample(3)
+
+    backs = [[] for i in range(len(colors))]
+    for c in range(len(colors)):
+        image_path = "images/" + colors[c] + "_back.png"
+        backs[c] = tk.PhotoImage(file=image_path)
+        backs[c] = backs[c].subsample(3)
 
 
 if __name__ == "__main__":
