@@ -168,7 +168,7 @@ class Game:
 
     def _find_mate(self, ace):
         for player in self._players:
-            if (ace, 13) in player._hand:
+            if (ace, 13) in player.hand:
                 self._mate = player.id
                 return
 
@@ -179,5 +179,5 @@ class Game:
     def showhands(self):
         for p in self._players:
             print p.name
-            print p._hand
+            print p.hand
         print "\n"

@@ -51,7 +51,7 @@ class HandDisplay(tk.Frame):
     def show_hand(self):
         next_player = game.next_player
         self.config(bg=colors[next_player])
-        hand = game._players[next_player]._hand
+        hand = game._players[next_player].hand
         for i in range(len(self.cards)):
             if i < len(hand):
                 self.cards[i].change_card(hand[i])
