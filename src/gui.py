@@ -13,6 +13,19 @@ colors = ["red", "blue", "yellow", "green"]
 game = Game()
 
 
+class CardDisplay(tk.Label):
+    def __init__(self, parent):
+        tk.Label.__init__(self, parent)
+
+    def change_card(self, card):
+        if isinstance(card, Card):
+            self.config(image=images[card.suit][card.value - 2])
+        elif isinstance(card, int):
+            self.config(image=backs[card])
+        else:
+            print ("wrong input to change_card function. {}".format(card))
+
+
 class CardButton(tk.Button):
 
     def __init__(self, parent, command):
@@ -60,6 +73,40 @@ class HandDisplay(tk.Frame):
                 self.cards[i].change_card(next_player)
 
 
+class StrokeDisplay(tk.Frame):
+
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent, bg="yellow")
+
+        ncards=4
+        self.cards = [[] for i in range(ncards)]
+        for i in range(ncards):
+            self.cards[i] = CardDisplay(self)
+            self.cards[i].change_card(Card(1, i+2))
+            self.cards[i].place(relx=1.0*i/ncards, rely=0.05, relwidth=1.0/ncards, relheight=0.9)
+        self.show_stroke()
+
+    def play(self, i):
+        global game
+        p = game._players[game.next_player]
+        card = p.play(i, game.suit)
+        if card:
+            game.play(p.id, card)
+
+        self.show_hand()
+
+    def show_stroke(self):
+        next_player = game.next_player
+        self.config(bg=colors[next_player])
+        stroke = game.cards
+        for i in range(len(self.cards)):
+            card = stroke[i]
+            if card.value == 0:
+                self.cards[i].change_card(i)
+            else:
+                self.cards[i].change_card(card)
+
+
 class App:
 
     def __init__(self, parent):
@@ -82,6 +129,9 @@ class App:
 
         self.handDisplay = HandDisplay(parent)
         self.handDisplay.place(relx=0.0, rely=0.6, relheight=0.4, relwidth=1.0)
+
+        self.strokeDisplay = StrokeDisplay(parent)
+        self.strokeDisplay.place(relx=0.5, rely=0.3, relheight=0.3, relwidth=0.5)
 
     def setup_game(self):
         global game
